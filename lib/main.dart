@@ -1,4 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:provider_overview_02/models/dog.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,58 +13,83 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return Provider<Dog>(
+      create: (context) => Dog(name: 'Doggy', breed: 'Bulldog', age: 3),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Provider_overView_02',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const MyHomePage(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text('Provider_OverView_02'), centerTitle: true),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
+          mainAxisSize: MainAxisSize.min,
+          children: [
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              '- name: ${Provider.of<Dog>(context).name}',
+              style: TextStyle(fontSize: 20),
             ),
+            SizedBox(height: 10),
+            BreedAndAge(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+    );
+  }
+}
+
+class BreedAndAge extends StatelessWidget {
+  const BreedAndAge({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          '- breed: ${Provider.of<Dog>(context).breed}',
+          style: TextStyle(fontSize: 20),
+        ),
+        SizedBox(height: 10),
+        Age(),
+      ],
+    );
+  }
+}
+
+class Age extends StatelessWidget {
+  const Age({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Text(
+            '- age: ${Provider.of<Dog>(context).age}',
+            style: TextStyle(fontSize: 20),
+          ),
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              Provider.of<Dog>(context, listen: false).grow();
+            },
+            child: Text('Grow'),
+          ),
+        ],
       ),
     );
   }
